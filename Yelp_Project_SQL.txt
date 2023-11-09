@@ -1,0 +1,489 @@
+Data Scientist Role Play: Profiling and Analyzing the Yelp Dataset Coursera Worksheet
+
+
+Part 1: Yelp Dataset Profiling and Understanding
+
+
+1. Profile the data by finding the total number of records for each of the tables below:
+	
+i. Attribute table = 10000 
+ii. Business table = 10000
+iii. Category table = 10000
+iv. Checkin table = 10000
+v. elite_years table = 10000
+vi. friend table = 10000
+vii. hours table = 10000
+viii. photo table = 10000
+ix. review table = 10000
+x. tip table = 10000
+xi. user table = 10000
+	
+
+
+2. Find the total distinct records by either the foreign key or primary key for each table. If two foreign keys are listed in the table, please specify which foreign key.
+
+i. Business = 10000
+ii. Hours = business_id 1562
+iii. Category = business_id 2643
+iv. Attribute = business_id 1115
+v. Review = id 10000, business_id 8090, user_id 958
+vi. Checkin = 493
+vii. Photo = id 10000, business_id 6493
+viii. Tip = user_id 537, business_id 3979
+ix. User = user_id 10000
+x. Friend = user_id 11
+xi. Elite_years = user_id 2780
+
+Note: Primary Keys are denoted in the ER-Diagram with a yellow key icon.	
+
+
+
+3. Are there any columns with null values in the Users table? Indicate "yes," or "no."
+
+	Answer: No 
+	
+	
+	SQL code used to arrive at answer:
+	
+
+SELECT COUNT(*) FROM user WHERE
+name IS NULL OR 
+review_count IS NULL OR 
+yelping_since IS NULL OR
+useful IS NULL OR 
+funny IS NULL OR 
+cool IS NULL OR 
+fans IS NULL OR 
+average_stars IS NULL OR 
+compliment_hot IS NULL OR 
+compliment_more IS NULL OR 
+compliment_profile IS NULL OR 
+compliment_cute IS NULL OR 
+compliment_list IS NULL OR 
+compliment_note IS NULL OR 
+compliment_plain IS NULL OR 
+compliment_cool IS NULL OR 
+compliment_funny IS NULL OR 
+compliment_writer IS NULL OR 
+compliment_photos IS NULL
+
+	
+4. For each table and column listed below, display the smallest (minimum), largest (maximum), and average (mean) value for the following fields:
+
+	i. Table: Review, Column: Stars
+	
+		min:		max:		avg:
+		1		5		3.7082
+
+SELECT MIN(STARS) , MAX(STARS) ,AVG(STARS)
+FROM Review
+	
+	ii. Table: Business, Column: Stars
+	
+		min:	1	max:	5	avg: 3.6549
+
+SELECT MIN(STARS) , MAX(STARS) ,AVG(STARS)
+FROM Business
+	
+	iii. Table: Tip, Column: Likes
+	
+		min:	0	max:	2	avg: 0.0144
+		
+SELECT MIN(Likes) , MAX(Likes) ,AVG(Likes)
+FROM Tip
+	
+	iv. Table: Checkin, Column: Count
+	
+		min:	1	max:	53	avg:  1.9414
+		
+SELECT MIN(Count) , MAX(Count) ,AVG(Count)
+FROM Checkin	
+
+	v. Table: User, Column: Review_count
+	
+		min:	0	max:	2000	avg: 24.2995
+
+SELECT MIN(Review_count) , MAX(Review_count) ,AVG(Review_count)
+FROM User		
+
+
+5. List the cities with the most reviews in descending order:
+
+	SQL code used to arrive at answer:
+	
+SELECT city , SUM(review_count) as revs
+FROM business 
+GROUP BY city 
+ORDER BY revs DESC;
+
+	Copy and Paste the Result Below:
+	
++-----------------+-------+
+| city            |  revs |
++-----------------+-------+
+| Las Vegas       | 82854 |
+| Phoenix         | 34503 |
+| Toronto         | 24113 |
+| Scottsdale      | 20614 |
+| Charlotte       | 12523 |
+| Henderson       | 10871 |
+| Tempe           | 10504 |
+| Pittsburgh      |  9798 |
+| MontrÃ©al        |  9448 |
+| Chandler        |  8112 |
+| Mesa            |  6875 |
+| Gilbert         |  6380 |
+| Cleveland       |  5593 |
+| Madison         |  5265 |
+| Glendale        |  4406 |
+| Mississauga     |  3814 |
+| Edinburgh       |  2792 |
+| Peoria          |  2624 |
+| North Las Vegas |  2438 |
+| Markham         |  2352 |
+| Champaign       |  2029 |
+| Stuttgart       |  1849 |
+| Surprise        |  1520 |
+| Lakewood        |  1465 |
+| Goodyear        |  1155 |
++-----------------+-------+
+(Output limit exceeded, 25 of 362 total rows shown)
+	
+6. Find the distribution of star ratings to the business in the following cities:
+
+i. Avon
+
+SQL code used to arrive at answer:
+
+SELECT stars, SUM(review_count) as count
+FROM business 
+WHERE city = "Avon" 
+GROUP BY stars
+
+Star rating and count:
+
++-------+-------+
+| stars | count |
++-------+-------+
+|   1.5 |    10 |
+|   2.5 |     6 |
+|   3.5 |    88 |
+|   4.0 |    21 |
+|   4.5 |    31 |
+|   5.0 |     3 |
++-------+-------+
+
+ii. Beachwood
+
+SQL code used to arrive at answer:
+
+SELECT stars, SUM(review_count) as count
+FROM business 
+WHERE city = "Beachwood" 
+GROUP BY stars
+
+Star rating and count:
+		
++-------+-------+
+| stars | count |
++-------+-------+
+|   2.0 |     8 |
+|   2.5 |     3 |
+|   3.0 |    11 |
+|   3.5 |     6 |
+|   4.0 |    69 |
+|   4.5 |    17 |
+|   5.0 |    23 |
++-------+-------+
+
+7. Top 3 users based on their total number of reviews:
+		
+	SQL code used to arrive at answer:
+	
+SELECT name,review_count
+FROM user
+ORDER BY review_count DESC
+LIMIT 3;
+		
+	
++--------+--------------+
+| name   | review_count |
++--------+--------------+
+| Gerald |         2000 |
+| Sara   |         1629 |
+| Yuri   |         1339 |
++--------+--------------+	
+
+
+
+8. Does posing more reviews correlate with more fans?
+
+
+There is no direct corelation between the number of fans and reviews as this can be also affected by the number of years ( total_years) and other factors not taken into account on this query.
+
+
+
+SELECT name, review_count AS REVIEWS , fans, STRFTIME('%Y',yelping_since) AS JOINED , 
+DATE('now')- yelping_since AS Total_Years
+FROM user
+ORDER BY fans DESC
+	
++-----------+---------+------+--------+-------------+
+| name      | REVIEWS | fans | JOINED | Total_Years |
++-----------+---------+------+--------+-------------+
+| Amy       |     609 |  503 | 2007   |          16 |
+| Mimi      |     968 |  497 | 2011   |          12 |
+| Harald    |    1153 |  311 | 2012   |          11 |
+| Gerald    |    2000 |  253 | 2012   |          11 |
+| Christine |     930 |  173 | 2009   |          14 |
+| Lisa      |     813 |  159 | 2009   |          14 |
+| Cat       |     377 |  133 | 2009   |          14 |
+| William   |    1215 |  126 | 2015   |           8 |
+| Fran      |     862 |  124 | 2012   |          11 |
+| Lissa     |     834 |  120 | 2007   |          16 |
+| Mark      |     861 |  115 | 2009   |          14 |
+| Tiffany   |     408 |  111 | 2008   |          15 |
+| bernice   |     255 |  105 | 2007   |          16 |
+| Roanna    |    1039 |  104 | 2006   |          17 |
+| Angela    |     694 |  101 | 2010   |          13 |
+| .Hon      |    1246 |  101 | 2006   |          17 |
+| Ben       |     307 |   96 | 2007   |          16 |
+| Linda     |     584 |   89 | 2005   |          18 |
+| Christina |     842 |   85 | 2012   |          11 |
+| Jessica   |     220 |   84 | 2009   |          14 |
+| Greg      |     408 |   81 | 2008   |          15 |
+| Nieves    |     178 |   80 | 2013   |          10 |
+| Sui       |     754 |   78 | 2009   |          14 |
+| Yuri      |    1339 |   76 | 2008   |          15 |
+| Nicole    |     161 |   73 | 2009   |          14 |
++-----------+---------+------+--------+-------------+
+(Output limit exceeded, 25 of 10000 total rows shown)
+
+	
+9. Are there more reviews with the word "love" or with the word "hate" in them?
+
+ Yes, there are more reviews containing the word love than hate . HATE = 232 entries and LOVE = 1780 . 
+
+	
+SQL code used to arrive at answer:
+
+SELECT count(*) AS HATE,
+ (SELECT count(*)
+FROM review 
+where text like('%love%')) AS LOVE
+FROM review
+where text like('%hate%')
+
++------+------+
+| HATE | LOVE |
++------+------+
+|  232 | 1780 |
++------+------+
+	
+	
+10. Top 10 users with the most fans:
+
+
+SELECT name, fans
+FROM user
+ORDER BY fans DESC
+LIMIT 10
+	
+	Copy and Paste the Result Below:
+
++-----------+------+
+| name      | fans |
++-----------+------+
+| Amy       |  503 |
+| Mimi      |  497 |
+| Harald    |  311 |
+| Gerald    |  253 |
+| Christine |  173 |
+| Lisa      |  159 |
+| Cat       |  133 |
+| William   |  126 |
+| Fran      |  124 |
+| Lissa     |  120 |
++-----------+------+
+	
+		
+
+Part 2: Inferences and Analysis
+
+
+1. Pick one city and category of your choice and group the businesses in that city or category by their overall star rating. Compare the businesses with 2-3 stars to the businesses with 4-5 stars and answer the following questions. 
+	
+i. Do the two groups you chose to analyze have a different distribution of hours?
+
+After analyzing the data for the city of Phoenix and the category of restaurants, it is evident that there is no direct correlation between the star rating and the opening times of these establishments.
+
+
++-------------+---------+-------------+-----------+---------------+
+| star_rating | city    | category    | Companies | opening_times |
++-------------+---------+-------------+-----------+---------------+
+| 2-3 stars   | Phoenix | Restaurants |         3 | 9:00-2:00     |
+| 4-5 stars   | Phoenix | Restaurants |         3 | 11:00-22:00   |
++-------------+---------+-------------+-----------+---------------+
+
+SELECT  
+CASE WHEN stars >= 4 THEN "4-5 stars"
+WHEN stars >= 2 THEN "2-3 stars"
+ELSE "Other "
+END star_rating, city, b.category , count( DISTINCT business.id) AS Companies 
+, SUBSTR(a.hours, 10) AS opening_times 
+FROM business
+LEFT JOIN hours a ON business.id = a.business_id
+LEFT JOIN category b ON business.id = b.business_id
+WHERE city = 'Phoenix' and category = 'Restaurants'
+GROUP BY star_rating;
+
+
+ii. Do the two groups you chose to analyze have a different number of reviews?
+
+ It is worth noting that restaurants with 2-3 star reviews tend to have slightly higher review counts compared to those with higher ratings. This observation may suggest that dissatisfied customers are more inclined to submit a review.
+
++-------------+---------+-------------+-----------+---------------+------------+
+| star_rating | city    | category    | Companies | opening_times | no_reviews |
++-------------+---------+-------------+-----------+---------------+------------+
+| 2-3 stars   | Phoenix | Restaurants |         3 | 9:00-2:00     |         21 |
+| 4-5 stars   | Phoenix | Restaurants |         3 | 11:00-22:00   |         15 |
++-------------+---------+-------------+-----------+---------------+------------+
+
+SELECT  
+CASE WHEN stars >= 4 THEN "4-5 stars"
+WHEN stars >= 2 THEN "2-3 stars"
+ELSE "Other "
+END star_rating, city, b.category , count( DISTINCT business.id) AS Companies 
+, SUBSTR(a.hours, 10) AS opening_times ,count(review_count) AS no_reviews
+FROM business
+LEFT JOIN hours a ON business.id = a.business_id
+LEFT JOIN category b ON business.id = b.business_id
+WHERE city = 'Phoenix' and category = 'Restaurants'
+GROUP BY star_rating;
+
+         
+iii. Infer anything from the location data provided between these two groups.
+
+It is noticeable that restaurants located in the postcode areas 85004-85008 tend to have lower star ratings, while those in the postcode areas 85016-85034 generally receive higher ratings. However, it is important to acknowledge that there is an outlier within the second postcode area, 85024, which suggests that location alone is not the primary factor influencing a positive customer experience.
+
+
++-------------+---------+-------------+-------------+-----------+---------------+-------------+
+| star_rating | city    | postal_code | category    | Companies | opening_times | Number_days |
++-------------+---------+-------------+-------------+-----------+---------------+-------------+
+| 2-3 stars   | Phoenix | 85004       | Restaurants |         1 | 5:00-0:00     |           7 |
+| 2-3 stars   | Phoenix | 85008       | Restaurants |         1 | 10:00-22:00   |           7 |
+| 4-5 stars   | Phoenix | 85016       | Restaurants |         1 | None          |           0 |
+| 2-3 stars   | Phoenix | 85024       | Restaurants |         1 | 9:00-2:00     |           7 |
+| 4-5 stars   | Phoenix | 85028       | Restaurants |         1 | 11:00-22:00   |           7 |
+| 4-5 stars   | Phoenix | 85034       | Restaurants |         1 | 11:00-18:00   |           7 |
++-------------+---------+-------------+-------------+-----------+---------------+-------------+
+
+
+
+
+SQL code used for analysis:
+
+SELECT  
+CASE WHEN stars >= 4 THEN "4-5 stars"
+WHEN stars >= 2 THEN "2-3 stars"
+ELSE "Other "
+END star_rating, city,postal_code, b.category , count( DISTINCT business.id) AS Companies 
+, SUBSTR(a.hours, 10) AS opening_times , count(a.hours) AS Number_days 
+FROM business
+LEFT JOIN hours a ON business.id = a.business_id
+LEFT JOIN category b ON business.id = b.business_id
+WHERE city = 'Phoenix' and category = 'Restaurants'
+GROUP BY postal_code;
+
+		
+		
+2. Group business based on the ones that are open and the ones that are closed. What differences can you find between the ones that are still open and the ones that are closed? List at least two differences and the SQL code you used to arrive at your answer.
+		
+i. Difference 1:
+       In Phoenix, only one restaurant has closed, despite having a high rating. However, it is worth considering that the number of reviews for this particular restaurant is relatively low (under 30 responses). As a result, the limited sample size of reviews may not provide statistically significant evidence to establish a causal relationship between these data points.
+         
+ii. Difference 2:
+        Although the majority of companies have chosen to remain open, it is important to note that high numbers of reviews often indicate a restaurant's popularity. Consequently, businesses that receive more reviews are more likely to thrive and maintain their operations successfully.
+         
+         
+SQL code used for analysis:
+
+
++--------+---------+-------------+--------------+------------+----------------+
+| STATUS | city    | category    | No_Companies | AVG_RATING | AVG_REVIEW_CNT |
++--------+---------+-------------+--------------+------------+----------------+
+| CLOSED | Phoenix | Restaurants |            1 |        4.5 |            7.0 |
+| OPEN   | Phoenix | Restaurants |            5 |        3.3 |          150.0 |
++--------+---------+-------------+--------------+------------+----------------
+
+
+SELECT  
+CASE WHEN is_open = 1 THEN "OPEN"
+WHEN is_open = 0 THEN "CLOSED"
+END  STATUS , city, b.category ,count( DISTINCT business.id) AS No_Companies, AVG(stars) AS AVG_RATING , AVG(review_count) AS AVG_REVIEW_CNT
+FROM business
+LEFT JOIN category b ON business.id = b.business_id
+WHERE city = 'Phoenix' and category = 'Restaurants'
+GROUP BY is_open;
+
+
+	
+	
+3. For this particular analysis, I will explore the potential correlation between the location and the type of businesses in order to identify any patterns or relationships.
+       
+Based on the ER diagram, the analysis will involve three tables: "business," "category," and "attribute." The goal is to determine the optimal attributes, location, and average star rating for each business category. This approach will enable a comprehensive assessment of businesses, considering key factors that contribute to their success and customer satisfaction.
+                           
+                  
+Output of your finished dataset:
+         
++--------+------------------+-----------------+-------------+-------+------------------------------+----------------------------+------------+-----------------+
+| STATUS | Number_Companies | With_Facilities | Location    | state | Business_Category            | Main_Facility              | AVG_RATING | AVERAGE_REVIEWS |
++--------+------------------+-----------------+-------------+-------+------------------------------+----------------------------+------------+-----------------+
+| OPEN   |                2 |               2 | Las Vegas   | NV    | Community Service/Non-Profit | GoodForKids                |        4.5 |            32.0 |
+| OPEN   |                2 |               1 | Peoria      | AZ    | Oil Change Stations          | BusinessAcceptsCreditCards |        4.5 |            43.0 |
+| OPEN   |                2 |               2 | Las Vegas   | NV    | Special Education            | GoodForKids                |        4.5 |            32.0 |
+| OPEN   |                2 |               2 | Las Vegas   | NV    | Visitor Centers              | GoodForKids                |        4.5 |            32.0 |
+| OPEN   |               23 |              23 | Mississauga | ON    | Caterers                     | BusinessParking            |        4.1 |            61.0 |
+| OPEN   |               26 |              26 | Mississauga | ON    | Event Planning & Services    | BusinessParking            |        4.1 |            56.0 |
+| OPEN   |               23 |              22 | Mississauga | ON    | Japanese                     | BusinessParking            |        4.1 |            52.0 |
+| OPEN   |                6 |               6 | Cleveland   | OH    | Candy Stores                 | RestaurantsTakeOut         |        4.0 |            49.0 |
+| OPEN   |               19 |              19 | Toronto     | ON    | French                       | BusinessParking            |        4.0 |            89.0 |
+| OPEN   |               20 |              20 | Mississauga | ON    | Latin American               | BusinessParking            |        4.0 |            69.0 |
+| OPEN   |               10 |               9 | Scottsdale  | AZ    | Professional Services        | ByAppointmentOnly          |        4.0 |            39.0 |
+| OPEN   |               27 |              27 | Phoenix     | AZ    | Smokehouse                   | WheelchairAccessible       |        4.0 |           431.0 |
+| OPEN   |               19 |              19 | Toronto     | ON    | Spanish                      | BusinessParking            |        4.0 |            89.0 |
+| OPEN   |               10 |               9 | Toronto     | ON    | Specialty Food               | RestaurantsDelivery        |        3.9 |           103.0 |
+| OPEN   |               48 |              48 | Phoenix     | AZ    | Barbeque                     | WheelchairAccessible       |        3.8 |           275.0 |
+| OPEN   |                4 |               3 | Toronto     | ON    | Ethnic Food                  | RestaurantsDelivery        |        3.8 |           183.0 |
+| OPEN   |               19 |              18 | Cleveland   | OH    | Coffee & Tea                 | WheelchairAccessible       |        3.6 |           109.0 |
+| OPEN   |                7 |               6 | Tempe       | AZ    | Local Flavor                 | WheelchairAccessible       |        3.6 |            34.0 |
+| OPEN   |               78 |              73 | Phoenix     | AZ    | American (Traditional)       | WheelchairAccessible       |        3.5 |           195.0 |
+| OPEN   |               20 |              19 | Las Vegas   | NV    | Arcades                      | Alcohol                    |        3.5 |           101.0 |
+| OPEN   |               98 |              88 | Toronto     | ON    | Food                         | RestaurantsDelivery        |        3.5 |           153.0 |
+| OPEN   |               95 |              88 | Phoenix     | AZ    | Bars                         | WheelchairAccessible       |        3.4 |           169.0 |
+| OPEN   |               96 |              88 | Phoenix     | AZ    | Nightlife                    | WheelchairAccessible       |        3.4 |           167.0 |
+| OPEN   |               97 |              96 | Verdun      | QC    | Fast Food                    | DriveThru                  |        3.2 |            35.0 |
+| OPEN   |              465 |             440 | Toronto     | ON    | Restaurants                  | BusinessParking            |        3.2 |            71.0 |
++--------+------------------+-----------------+-------------+-------+------------------------------+----------------------------+------------+-----------------+
+
+         
+SQL code you used to create the final dataset:
+
+SELECT CASE WHEN is_open = 1 THEN "OPEN"
+WHEN is_open = 0 THEN "CLOSED"
+END  STATUS ,count(is_open) AS Number_Companies, count(c.name) AS With_Facilities,city AS Location,a.state,b.category AS Business_Category,c.name AS Main_Facility, ROUND(avg(stars),1) AS AVG_RATING ,ROUND(AVG(review_count),0) AS AVERAGE_REVIEWS
+FROM business a LEFT JOIN category b ON a.id = b.business_id
+LEFT JOIN attribute c ON a.id = c.business_id
+WHERE STATUS = 'OPEN' 
+GROUP BY category 
+HAVING  category !="none" AND c.name !="none" AND AVG_RATING > 3 AND AVERAGE_REVIEWS >30
+ORDER BY AVG_RATING DESC
+
+
+Conclusions and key findings :
+
+ In this dataset, we can identify four primary business categories: Hospitality, Entertainment, Event Planning, and Specialist Services. To ensure statistical significance, I filtered the dataset to include only businesses with a minimum of 30 reviews and focused on the top-performing companies with an average rating above 3. Upon analyzing the data, it becomes apparent that the number of facilities provided by companies has minimal influence on their competitive advantage, as most companies tend to have similar facility offerings.
+
+However, competition varies across different locations. For instance, in Phoenix and Toronto, the restaurant, bar, and food businesses face intense competition. Interestingly, within this category, restaurants offering niche cuisines tend to achieve better customer satisfaction ratings. On the other hand, the hospitality industry receives comparatively lower ratings, while higher ratings are generally associated with other business categories such as Entertainment, Social Services, and Specialist Services. The number of companies in a location can also indicate lower competition in those areas.
+
+To gain a deeper understanding and obtain more accurate findings, further analysis is necessary.
